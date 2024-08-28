@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './App.css';  // Import the new CSS file
 
 function App() {
     const [query, setQuery] = useState("");
@@ -6,7 +7,7 @@ function App() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await fetch('http://localhost:5001/query', {  // Update to port 5001
+        const res = await fetch('http://localhost:5001/query', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -18,7 +19,7 @@ function App() {
     };
 
     return (
-        <div style={{ padding: "20px" }}>
+        <div className="app-container">
             <h1>Knowledge Graph Chat Interface</h1>
             <form onSubmit={handleSubmit}>
                 <input
@@ -26,11 +27,10 @@ function App() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Ask a question..."
-                    style={{ width: "300px", padding: "10px" }}
                 />
-                <button type="submit" style={{ padding: "10px", marginLeft: "10px" }}>Submit</button>
+                <button type="submit">Submit</button>
             </form>
-            <div style={{ marginTop: "20px", padding: "10px", border: "1px solid #ccc", width: "320px" }}>
+            <div className="response-container">
                 <strong>Response:</strong>
                 <p>{response}</p>
             </div>

@@ -1,31 +1,37 @@
 import requests
 from bs4 import BeautifulSoup
 
-# URL of the webpage to scrape
-url = "https://en.wikipedia.org/wiki/Altera"
+def scrape_wikipedia_page(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
 
-# Fetch the webpage content
-response = requests.get(url)
-soup = BeautifulSoup(response.content, "html.parser")
+    # Extract headings
+    headings = [h2.text.strip() for h2 in soup.find_all('h2')]
 
-# Extracting headings (e.g., H2 tags)
-headings = soup.find_all('h2')
-print("Headings:")
-for heading in headings:
-    print(heading.text.strip())
+    # Extract paragraphs
+    paragraphs = [p.text.strip() for p in soup.find_all('p')]
 
-# Extracting paragraphs
-paragraphs = soup.find_all('p')
-print("\nParagraphs:")
-for paragraph in paragraphs[:3]:  # Limiting to first 3 paragraphs for simplicity
-    print(paragraph.text.strip())
+    # Extract tables
+    tables = [table.text.strip() for table in soup.find_all('table')]
 
-# Save the extracted data into a text file
-with open("extracted_data.txt", "w") as file:
-    file.write("Headings:\n")
-    for heading in headings:
-        file.write(heading.text.strip() + "\n")
+    # Extract infoboxes or lists
+    infobox = soup.find(class_="infobox")
+    infobox_data = infobox.text.strip() if infobox else ""
 
-    file.write("\nParagraphs:\n")
-    for paragraph in paragraphs[:3]:
-        file.write(paragraph.text.strip() + "\n")
+    return {
+        "headings": headings,
+        "paragraphs": paragraphs,
+        "tables": tables,
+        "infobox": infobox_data
+    }
+
+if __name__ == "__main__":
+    url = "https://en.wikipedia.org/wiki/Altera"
+    data = scrape_wikipedia_page(url)
+
+    # Save the extracted data into a text file
+    with open("extended_extracted_data.txt", "w") as file:
+        file.write("Headings:\n" + "\n".join(data["headings"]) + "\n\n")
+        file.write("Paragraphs:\n" + "\n".join(data["paragraphs"]) + "\n\n")
+        file.write("Tables:\n" + "\n".join(data["tables"]) + "\n\n")
+        file.write("Infobox:\n" + data["infobox"] + "\n")

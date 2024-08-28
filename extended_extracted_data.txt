@@ -1,0 +1,790 @@
+Headings:
+Contents
+Products
+Intel Partnership, Acquisition and Ownership
+Restatement of financial results
+See also
+References
+
+Paragraphs:
+Altera Corporation is a manufacturer of programmable logic devices (PLDs) headquartered in San Jose, California. It was founded in 1983 and acquired by Intel in 2015 before becoming independent once again in 2024 as a company focused on development of Field-Programmable Gate Array (FPGA) technology and system on a chip FPGAs.
+The company was founded in 1983 by semiconductor veterans Rodney Smith, Robert Hartmann, James Sansbury, and Paul Newhagen with $500,000 in seed money. The name of the company was a play on "alterable", the type of chips the company created. In 1988, Altera became a public company via an initial public offering (IPO).[2]
+On December 28, 2015, the company was acquired by Intel and became a newly formed business unit called Programmable Solutions Group (PSG).[3] In October 2023, Intel announced it would be spinning off PSG into a separate company at the start of 2024, while maintaining majority ownership and intending to seek an IPO within three years.[4][5] In February 2024, Intel announced that the newly independent company would reestablish the Altera name and branding.[6]
+The main product lines from Altera are the Agilex FPGA product lines, and their predecessors: the high-end Stratix series, mid-range Arria series,[7] and lower-cost Cyclone series; as well as the MAX series non-volatile FPGAs.
+Altera and its partners offer an array of semiconductor intellectual property cores that serve as building blocks that design engineers can drop into their system designs to perform specific functions. IP cores eliminate some of the time-consuming tasks of creating every block in a design from scratch. In 2000, Altera acquired Designpro and Northwest Logic, providers of IP cores, in order to expand its design capabilities and move towards delivery of complete system-on-chip solutions.[8][9]
+Beginning in December 2012, the company announced the shipment of its first system on a chip FPGA devices using a fully depleted silicon on insulator (FDSOI) 28nm chip manufacturing process. These are the Cyclone V SoC devices, which have a dual-core ARM architecture Cortex-A9 processor system with FPGA logic on a single chip.[10] These devices integrated FPGAs with full hard processor systems based around ARM architecture onto a single device.[11][12] As of 2024, the majority of Altera's FPGA devices are available as an SoC variant with an ARM hard processor system integrated with the FPGA as a single system on a chip.
+These SoCs are targeted for use in wireless communications, industrial, video surveillance, automotive and medical equipment markets. With these SoCs devices, users were able to create custom field-programmable SoC variants for power, board space, performance and cost optimization.[13]
+Cyclone V SoC, Arria V SoC and Arria 10 SoC product families are system on a chip FPGAs based upon a hard ARM Cortex-A9 dual-core processor system.
+Stratix 10 SoC and Agilex 7 SoC product families are system on a chip FPGAs based upon a hard ARM Cortex-A53 quad-core processor system.
+The Agilex 5 SoC product family are system on a chip FPGAs based upon a hard ARM Cortex-A76/A55 quad-core processor system.
+Altera offers the Nios V embedded soft processor cores based on the RISC-V instruction set architecture. Previously Altera had offered their own proprietary Nios II embedded soft processor, the Freescale ColdFire v1 core, and the ARM Cortex-M1 processor.
+All of Altera's devices are supported by a common design environment, the Quartus Prime design software, which is a multi-platform development environment that includes various tools needed to design FPGAs, SoC FPGAs, and CPLDs.[14][15]
+In May 2013, Altera made available SDK for OpenCL, enabling software programmers to access the high-performance capabilities of programmable logic devices.[16]
+Altera also support high-level synthesis using SYCL extensions to ANSI C/C++.
+In 1984, the company formed a long-running design partnership with Intel. In 1994, Altera acquired the PLD business of Intel for $50 million.[17]
+In February 2013, Altera announced an agreement to use Intel's foundry services to produce its 14-nm node for the future manufacturing of its FPGAs, based on Intel's 14-nm tri-gate transistor technology, in place of Altera's ongoing agreement with TSMC.[18] The Stratix 10 product family was the first such product line.[19]
+In December 2015, Intel acquired Altera for $16.7 billion in cash.[20][21] Altera became Intel's newly formed business unit called the Programmable Solutions Group (PSG).[3]
+In October 2023, Intel announced it would be spinning off PSG into a separate company at the start of 2024, while maintaining majority ownership and intending to seek an IPO within three years.[4][5] In February 2024, Intel announced that the newly independent company would reestablish the Altera name and branding.[6]
+On June 21, 2006, after an investigation by the U.S. Securities and Exchange Commission, the company restated its financial results from 1996 to 2005 to correct accounting errors related to options backdating. The chief financial officer of the company resigned.[22][23][24] Altera filed a petition to overturn related regulations but was, under Intel, denied in 2020.[25]
+
+Tables:
+Altera CorporationHeadquarters in San Jose, CaliforniaCompany typeSubsidiaryIndustryIntegrated circuitsFoundedJune 1983; 41 years ago (June 1983)HeadquartersSan Jose, California, United StatesKey peopleSandra L. Rivera (CEO)ProductsFPGAsCPLDsEmbedded systems ASICsRevenue $1.932 billion (2014)Net income $472 million (2014)Total assets $5.674 billion (2014)Total equity $3.285 billion (2014)Number of employees3,091 (2014)ParentIntelWebsitealtera.comFootnotes / references[1]
+vteIntelSubsidiaries
+3Dlabs
+Altera
+Intel Security
+Mobileye
+Recon Instruments
+Virtutech
+Wind River Systems
+Xircom
+Joint venture4Group Holdings (50% owned by Vantiva)Products
+3D XPoint
+Accounts & SSO
+Amplify Tablet
+Advanced Programmable Interrupt Controller
+Cache Acceleration Software
+Client Initiated Remote Access
+Direct Media Interface
+Flexible Display Interface
+Hella Zippy
+Intel 1103
+Intel AZ210
+Intel Clear Video
+Intel Display Power Saving Technology
+Intel Modular Server System
+Intel Quick Sync Video
+Intel Reader
+Intel system development kit
+Intel Upgrade Service
+Intel740
+InTru3D
+IXP1200
+OFono
+Omni-Path
+Performance acceleration technology
+Shooting Star
+SSDs (X25-M)
+Stable Image Platform Program
+Virtual 8086 mode
+WiDi
+x86
+vteIntel processorsLists
+Processors
+Atom
+Celeron
+Pentium
+Pro
+II
+III
+4
+D
+M
+Core
+2
+i3
+i5
+i7
+i9
+M
+Xeon
+Quark
+Itanium
+Microarchitectures
+Chipsets
+MicroarchitecturesIA-32 (32-bit x86)
+P5
+P6
+P6 variant (Pentium M)
+P6 variant (Enhanced Pentium M)
+NetBurst
+x86-64 (64-bit)
+Core
+Penryn
+Nehalem
+Westmere
+Sandy Bridge
+Ivy Bridge
+Haswell
+Broadwell
+Skylake
+Cannon Lake
+Sunny Cove
+Cypress Cove
+Willow Cove
+Golden Cove
+x86 ULV
+Bonnell
+Saltwell
+Silvermont
+Goldmont
+Goldmont Plus
+Tremont
+Gracemont
+Current productsx86-64 (64-bit)
+Atom
+Celeron
+Pentium
+Core
+10th gen
+11th gen
+12th gen
+13th gen
+14th gen
+Xeon
+DiscontinuedBCD oriented (4-bit)
+4004 (1971)
+4040 (1974)
+pre-x86 (8-bit)
+8008 (1972)
+8080 (1974)
+8085 (1977)
+Early x86 (16-bit)
+8086 (1978)
+8088 (1979)
+80186 (1982)
+80188 (1982)
+80286 (1982)
+x87 (external FPUs)
+8/16-bit databus
+8087 (1980)
+16-bit databus
+80C187
+80287
+80387SX
+32-bit databus
+80387DX
+80487
+IA-32 (32-bit x86)
+i386
+SX
+376
+EX
+i486
+SX
+DX2
+DX4
+SL
+RapidCAD
+OverDrive
+A100/A110
+Atom
+CE
+SoC
+Celeron (1998)
+M
+D (2004)
+Pentium
+Original i586
+OverDrive
+Pro
+II
+III
+4
+M
+Dual-Core
+Core
+Xeon
+P6-based
+NetBurst-based
+Core-based
+Quark
+Tolapai
+x86-64 (64-bit)
+Atom
+SoC
+CE
+Celeron
+D
+Dual-Core
+Pentium
+4
+D
+Extreme Edition
+Dual-Core
+Core
+2
+1st gen
+2nd gen
+3rd gen
+4th gen
+5th gen
+6th gen
+7th gen
+8th gen
+9th gen
+10th gen
+11th gen
+M
+Xeon
+Nehalem-based
+Sandy Bridge-based
+Ivy Bridge-based
+Haswell-based
+Broadwell-based
+Skylake-based
+Other
+CISC
+iAPX 432
+EPIC
+Itanium
+RISC
+i860
+i960
+StrongARM
+XScale
+Related
+Tick–tock model
+Process–architecture–optimization model
+Intel GPUs
+GMA
+Intel HD, UHD, and Iris Graphics
+Xe
+Arc
+PCHs
+SCHs
+ICHs
+PIIXs
+Stratix
+Codenames
+Larrabee
+
+Litigation
+Advanced Micro Devices, Inc. v. Intel Corp.
+High-Tech Employee Antitrust Litigation
+Intel Corp. v. Advanced Micro Devices, Inc.
+Intel Corp. v. Hamidi
+Intel Corporation Inc. v CPM United Kingdom Ltd
+Silvaco Data Systems v. Intel Corp.
+PeopleFounders
+Gordon Moore
+Robert Noyce
+CEOs
+Robert Noyce
+Gordon Moore
+Andrew Grove
+Craig Barrett
+Paul Otellini
+Brian Krzanich
+Bob Swan
+Pat Gelsinger
+Related
+Intel Foundation Achievement Award
+Mac transition to Intel processors
+Intel Architecture Labs
+ASCI Red
+BiiN
+Classmate PC
+Convera Corporation
+Copy Exactly!
+Intel Developer Forum
+Dynamic video memory technology
+Intel Extreme Masters
+List of Intel microprocessors
+List of Intel graphics processing units (2013 or earlier)
+I/O Acceleration Technology
+IA-32 Execution Layer
+IM Flash Technologies
+The Innovators
+Inside Films
+Inside
+The Beauty Inside
+The Power Inside
+Intel ADX
+Intel Capital
+Intel Cluster Ready
+Intel Compute Stick
+Intel Ireland
+Intel Mobile Communications
+Intel Outstanding Researcher Award
+Intel SHA extensions
+Intel Teach
+List of semiconductor fabrication plants
+List of Intel manufacturing sites
+List of mergers and acquisitions by Intel
+Intel Museum
+OnCue
+Intel PRO/Wireless
+Intel International Science and Engineering Fair
+Regeneron Science Talent Search
+Simple Firmware Interface
+Single-chip Cloud Computer
+Software Guard Extensions
+Supervisor Mode Access Prevention
+Tarari
+Intel Tera-Scale
+Timeline of Intel
+vteIntel processorsLists
+Processors
+Atom
+Celeron
+Pentium
+Pro
+II
+III
+4
+D
+M
+Core
+2
+i3
+i5
+i7
+i9
+M
+Xeon
+Quark
+Itanium
+Microarchitectures
+Chipsets
+MicroarchitecturesIA-32 (32-bit x86)
+P5
+P6
+P6 variant (Pentium M)
+P6 variant (Enhanced Pentium M)
+NetBurst
+x86-64 (64-bit)
+Core
+Penryn
+Nehalem
+Westmere
+Sandy Bridge
+Ivy Bridge
+Haswell
+Broadwell
+Skylake
+Cannon Lake
+Sunny Cove
+Cypress Cove
+Willow Cove
+Golden Cove
+x86 ULV
+Bonnell
+Saltwell
+Silvermont
+Goldmont
+Goldmont Plus
+Tremont
+Gracemont
+Current productsx86-64 (64-bit)
+Atom
+Celeron
+Pentium
+Core
+10th gen
+11th gen
+12th gen
+13th gen
+14th gen
+Xeon
+DiscontinuedBCD oriented (4-bit)
+4004 (1971)
+4040 (1974)
+pre-x86 (8-bit)
+8008 (1972)
+8080 (1974)
+8085 (1977)
+Early x86 (16-bit)
+8086 (1978)
+8088 (1979)
+80186 (1982)
+80188 (1982)
+80286 (1982)
+x87 (external FPUs)
+8/16-bit databus
+8087 (1980)
+16-bit databus
+80C187
+80287
+80387SX
+32-bit databus
+80387DX
+80487
+IA-32 (32-bit x86)
+i386
+SX
+376
+EX
+i486
+SX
+DX2
+DX4
+SL
+RapidCAD
+OverDrive
+A100/A110
+Atom
+CE
+SoC
+Celeron (1998)
+M
+D (2004)
+Pentium
+Original i586
+OverDrive
+Pro
+II
+III
+4
+M
+Dual-Core
+Core
+Xeon
+P6-based
+NetBurst-based
+Core-based
+Quark
+Tolapai
+x86-64 (64-bit)
+Atom
+SoC
+CE
+Celeron
+D
+Dual-Core
+Pentium
+4
+D
+Extreme Edition
+Dual-Core
+Core
+2
+1st gen
+2nd gen
+3rd gen
+4th gen
+5th gen
+6th gen
+7th gen
+8th gen
+9th gen
+10th gen
+11th gen
+M
+Xeon
+Nehalem-based
+Sandy Bridge-based
+Ivy Bridge-based
+Haswell-based
+Broadwell-based
+Skylake-based
+Other
+CISC
+iAPX 432
+EPIC
+Itanium
+RISC
+i860
+i960
+StrongARM
+XScale
+Related
+Tick–tock model
+Process–architecture–optimization model
+Intel GPUs
+GMA
+Intel HD, UHD, and Iris Graphics
+Xe
+Arc
+PCHs
+SCHs
+ICHs
+PIIXs
+Stratix
+Codenames
+Larrabee
+IA-32 (32-bit x86)
+P5
+P6
+P6 variant (Pentium M)
+P6 variant (Enhanced Pentium M)
+NetBurst
+x86-64 (64-bit)
+Core
+Penryn
+Nehalem
+Westmere
+Sandy Bridge
+Ivy Bridge
+Haswell
+Broadwell
+Skylake
+Cannon Lake
+Sunny Cove
+Cypress Cove
+Willow Cove
+Golden Cove
+x86 ULV
+Bonnell
+Saltwell
+Silvermont
+Goldmont
+Goldmont Plus
+Tremont
+Gracemont
+x86-64 (64-bit)
+Atom
+Celeron
+Pentium
+Core
+10th gen
+11th gen
+12th gen
+13th gen
+14th gen
+Xeon
+BCD oriented (4-bit)
+4004 (1971)
+4040 (1974)
+pre-x86 (8-bit)
+8008 (1972)
+8080 (1974)
+8085 (1977)
+Early x86 (16-bit)
+8086 (1978)
+8088 (1979)
+80186 (1982)
+80188 (1982)
+80286 (1982)
+x87 (external FPUs)
+8/16-bit databus
+8087 (1980)
+16-bit databus
+80C187
+80287
+80387SX
+32-bit databus
+80387DX
+80487
+IA-32 (32-bit x86)
+i386
+SX
+376
+EX
+i486
+SX
+DX2
+DX4
+SL
+RapidCAD
+OverDrive
+A100/A110
+Atom
+CE
+SoC
+Celeron (1998)
+M
+D (2004)
+Pentium
+Original i586
+OverDrive
+Pro
+II
+III
+4
+M
+Dual-Core
+Core
+Xeon
+P6-based
+NetBurst-based
+Core-based
+Quark
+Tolapai
+x86-64 (64-bit)
+Atom
+SoC
+CE
+Celeron
+D
+Dual-Core
+Pentium
+4
+D
+Extreme Edition
+Dual-Core
+Core
+2
+1st gen
+2nd gen
+3rd gen
+4th gen
+5th gen
+6th gen
+7th gen
+8th gen
+9th gen
+10th gen
+11th gen
+M
+Xeon
+Nehalem-based
+Sandy Bridge-based
+Ivy Bridge-based
+Haswell-based
+Broadwell-based
+Skylake-based
+Other
+CISC
+iAPX 432
+EPIC
+Itanium
+RISC
+i860
+i960
+StrongARM
+XScale
+Founders
+Gordon Moore
+Robert Noyce
+CEOs
+Robert Noyce
+Gordon Moore
+Andrew Grove
+Craig Barrett
+Paul Otellini
+Brian Krzanich
+Bob Swan
+Pat Gelsinger
+vteProgrammable logicConcepts
+ASIC
+SoC
+FPGA
+Logic block
+CPLD
+EPLD
+PLA
+PAL
+GAL
+PSoC
+Reconfigurable computing
+Xputer
+Soft microprocessor
+Circuit underutilization
+High-level synthesis
+Hardware acceleration
+Languages
+Verilog
+A
+AMS
+VHDL
+AMS
+VITAL
+SystemVerilog
+DPI
+SystemC
+AHDL
+Handel-C
+Lola
+PSL
+UPF
+PALASM
+ABEL
+CUPL
+OpenVera
+C to HDL
+Flow to HDL
+MyHDL
+ELLA
+Chisel
+Companies
+Accellera
+Achronix
+AMD
+Aldec
+Arm
+Cadence
+Infineon
+Intel
+Lattice
+Microchip Technology
+NXP
+Siemens
+Synopsys
+Texas Instruments
+ProductsHardware
+iCE
+Stratix
+Virtex
+Software
+Intel Quartus Prime
+Xilinx ISE
+Vivado
+ModelSim
+VTR
+Simulators
+IntellectualpropertyProprietary
+ARC
+ARM Cortex-M
+LEON
+LatticeMico8
+MicroBlaze
+PicoBlaze
+Nios
+Nios II
+Open-source
+JOP
+LatticeMico32
+OpenCores
+OpenRISC
+1200
+Power ISA
+Libre-SOC
+Microwatt
+RISC-V
+Zet
+Hardware
+iCE
+Stratix
+Virtex
+Software
+Intel Quartus Prime
+Xilinx ISE
+Vivado
+ModelSim
+VTR
+Simulators
+IntellectualpropertyProprietary
+ARC
+ARM Cortex-M
+LEON
+LatticeMico8
+MicroBlaze
+PicoBlaze
+Nios
+Nios II
+Open-source
+JOP
+LatticeMico32
+OpenCores
+OpenRISC
+1200
+Power ISA
+Libre-SOC
+Microwatt
+RISC-V
+Zet
+Proprietary
+ARC
+ARM Cortex-M
+LEON
+LatticeMico8
+MicroBlaze
+PicoBlaze
+Nios
+Nios II
+Open-source
+JOP
+LatticeMico32
+OpenCores
+OpenRISC
+1200
+Power ISA
+Libre-SOC
+Microwatt
+RISC-V
+Zet
+Authority control databases ISNIVIAF
+
+Infobox:
+Altera CorporationHeadquarters in San Jose, CaliforniaCompany typeSubsidiaryIndustryIntegrated circuitsFoundedJune 1983; 41 years ago (June 1983)HeadquartersSan Jose, California, United StatesKey peopleSandra L. Rivera (CEO)ProductsFPGAsCPLDsEmbedded systems ASICsRevenue $1.932 billion (2014)Net income $472 million (2014)Total assets $5.674 billion (2014)Total equity $3.285 billion (2014)Number of employees3,091 (2014)ParentIntelWebsitealtera.comFootnotes / references[1]

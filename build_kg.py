@@ -10,8 +10,8 @@ username = "neo4j"
 password = "Soham@1142000"
 driver = GraphDatabase.driver(uri, auth=(username, password))
 
-# Load the SpaCy model for NER
-nlp = spacy.load("en_core_web_sm")
+# Load the SpaCy transformer-based model for NER
+nlp = spacy.load("en_core_web_trf")
 
 def create_node(tx, label, name, properties=None):
     if properties is None:

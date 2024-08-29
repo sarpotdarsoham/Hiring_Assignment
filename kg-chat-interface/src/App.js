@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import botAvatar from './bot-avatar.jpg';  // Import bot avatar image
-import userAvatar from './user.png';  // Import user avatar image
+import botAvatar from './bot-avatar.jpg';
+import userAvatar from './user.png';
 
 const ChatMessage = ({ message, isUser }) => (
   <div className={`chat-message ${isUser ? 'user-message' : 'bot-message'}`}>
     <img 
-      src={isUser ? userAvatar : botAvatar}  // Use the user avatar for user messages, bot avatar for bot messages
+      src={isUser ? userAvatar : botAvatar}
       alt={isUser ? 'User' : 'Bot'} 
       className="avatar"
     />
@@ -18,7 +18,7 @@ const ChatMessage = ({ message, isUser }) => (
 
 const TypingIndicator = () => (
   <div className="typing-indicator">
-    <img src={botAvatar} alt="Bot" className="avatar" />  {/* Use the bot avatar */}
+    <img src={botAvatar} alt="Bot" className="avatar" />
     <div className="typing-dots">
       <div></div>
       <div></div>
@@ -53,6 +53,11 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
       });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
       const data = await res.json();
       
       setTimeout(() => {
@@ -62,7 +67,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching response:', error);
       setIsLoading(false);
-      setChatHistory(prev => [...prev, { message: "Sorry, I couldn't process your request. Please try again.", isUser: false }]);
+      setChatHistory(prev => [...prev, { message: `Error: ${error.message}. Please try again.`, isUser: false }]);
     }
   };
 

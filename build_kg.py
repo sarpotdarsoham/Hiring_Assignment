@@ -1,16 +1,12 @@
 import spacy
 import re
 from neo4j import GraphDatabase
-import networkx as nx
-from collections import defaultdict
 
-# Neo4j connection details
 uri = "bolt://localhost:7687"
 username = "neo4j"
 password = "Soham@1142000"
 driver = GraphDatabase.driver(uri, auth=(username, password))
 
-# Load the SpaCy transformer-based model for NER
 nlp = spacy.load("en_core_web_trf")
 
 def create_node(tx, label, name, properties=None):
@@ -19,106 +15,87 @@ def create_node(tx, label, name, properties=None):
     properties['name'] = name
     query = f"MERGE (a:{label} {{name: $name}}) SET a += $properties"
     tx.run(query, name=name, properties=properties)
+    print(f"Node created: ({label}: {name})")
 
 def create_relationship(tx, source_label, source_name, target_label, target_name, relationship_type):
+    source_name = source_name.strip().lower()
+    target_name = target_name.strip().lower()
+    print(f"Attempting to create relationship: ({source_label}: '{source_name}') -[{relationship_type}]-> ({target_label}: '{target_name}')")
     query = f"""
     MATCH (a:{source_label} {{name: $source_name}})
     MATCH (b:{target_label} {{name: $target_name}})
     MERGE (a)-[r:{relationship_type}]->(b)
+    RETURN r
     """
-    tx.run(query, source_name=source_name, target_name=target_name)
+    result = tx.run(query, source_name=source_name, target_name=target_name)
+    print(f"Relationship creation result: {result.consume().counters}")
+
 
 def clean_entity_name(name):
-    name = re.sub(r"[^\w\s]", "", name)
+    name = re.sub(r"[^\w\s,.-]", "", name)
     name = re.sub(r"\s+", " ", name).strip()
     return name
 
-def extract_entities(text):
+def extract_entities_and_relationships(text):
     doc = nlp(text)
     entities = []
+    relationships = []
+
     for ent in doc.ents:
         if ent.label_ in {"ORG", "PRODUCT", "PERSON", "GPE", "EVENT", "WORK_OF_ART", "LAW", "LANGUAGE"}:
             clean_name = clean_entity_name(ent.text)
             if len(clean_name) > 2:
                 entities.append((clean_name, ent.label_))
-    return list(set(entities))  # Remove duplicates
 
-def build_knowledge_graph(data_file):
+    for token in doc:
+        if token.dep_ in ("nsubj", "dobj", "pobj"):
+            subject = token.head
+            if subject.ent_type_ and token.ent_type_:
+                relationship_type = determine_relationship(subject.ent_type_, token.ent_type_)
+                relationships.append((subject.text, subject.ent_type_, token.text, token.ent_type_, relationship_type))
+
+    print(f"Entities extracted: {len(entities)}")
+    print(f"Relationships extracted: {len(relationships)}")
+    
+    return list(set(entities)), list(set(relationships))
+
+def determine_relationship(ent1_label, ent2_label):
+    if ent1_label == "PERSON" and ent2_label == "PRODUCT":
+        return "CREATED"
+    elif ent1_label == "ORG" and ent2_label == "PRODUCT":
+        return "MANUFACTURES"
+    elif ent1_label == "GPE" and ent2_label == "ORG":
+        return "LOCATED_IN"
+    elif ent1_label == "PRODUCT" and ent2_label == "PRODUCT":
+        return "COMPATIBLE_WITH"
+    return "RELATED_TO"
+
+def build_knowledge_graph_in_chunks(file_path, chunk_size=1024):
     with driver.session() as session:
-        with open(data_file, "r") as file:
-            text = file.read()
-            entities = extract_entities(text)
-            
-            # Create nodes
-            for entity, label in entities:
-                session.execute_write(create_node, label, entity)
-            
-            # Create relationships
-            for i, (entity1, label1) in enumerate(entities):
-                for entity2, label2 in entities[i+1:]:
+        with open(file_path, "r") as file:
+            while True:
+                chunk = file.read(chunk_size)
+                if not chunk:
+                    break
+                entities, relationships = extract_entities_and_relationships(chunk)
+                
+                for entity, label in entities:
+                    session.execute_write(create_node, label, entity)
+                
+                for entity1, label1, entity2, label2, rel_type in relationships:
                     if entity1 != entity2:
-                        session.execute_write(create_relationship, label1, entity1, label2, entity2, "RELATED_TO")
+                        session.execute_write(create_relationship, label1, entity1, label2, entity2, rel_type)
 
-def clear_graph(tx):
-    tx.run("MATCH (n) DETACH DELETE n")
-
-def get_graph_data(tx):
-    result = tx.run("""
-    MATCH (n)-[r]->(m)
-    RETURN n.name AS source, m.name AS target, type(r) AS relationship
-    """)
-    return [(record["source"], record["target"], record["relationship"]) for record in result]
-
-def build_networkx_graph(graph_data):
-    G = nx.Graph()
-    for source, target, relationship in graph_data:
-        G.add_edge(source, target, relationship=relationship)
-    return G
-
-def calculate_pagerank(G):
-    return nx.pagerank(G)
-
-def detect_communities(G):
-    return nx.community.louvain_communities(G)
-
-def update_node_properties(tx, node_name, pagerank, community):
-    query = """
-    MATCH (n {name: $name})
-    SET n.pagerank = $pagerank, n.community = $community
-    """
-    tx.run(query, name=node_name, pagerank=pagerank, community=community)
+def clear_graph():
+    with driver.session() as session:
+        session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE n"))
+        print("Existing graph cleared.")
 
 if __name__ == "__main__":
     data_file = "extended_extracted_data.txt"
     
-    with driver.session() as session:
-        # Clear existing graph
-        session.execute_write(clear_graph)
-        
-        # Build new graph
-        build_knowledge_graph(data_file)
-        
-        # Get graph data for NetworkX
-        graph_data = session.execute_read(get_graph_data)
-        
-        # Build NetworkX graph
-        G = build_networkx_graph(graph_data)
-        
-        # Calculate PageRank
-        pagerank = calculate_pagerank(G)
-        
-        # Detect communities
-        communities = detect_communities(G)
-        
-        # Create a mapping of nodes to their community
-        node_community = {}
-        for i, community in enumerate(communities):
-            for node in community:
-                node_community[node] = i
-        
-        # Update Neo4j with PageRank and community information
-        for node, pr in pagerank.items():
-            community = node_community.get(node, -1)  # -1 if node is not in any community
-            session.execute_write(update_node_properties, node, pr, community)
+    clear_graph()
 
-print("Knowledge graph built and analyzed successfully!")
+    build_knowledge_graph_in_chunks(data_file, chunk_size=4096)
+
+    print("Knowledge graph built and analyzed successfully!")

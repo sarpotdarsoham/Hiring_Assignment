@@ -20,13 +20,13 @@ def query_knowledge_graph(query):
         with driver.session() as session:
             result = session.run("MATCH (n) RETURN n.name")
             all_names = [record["n.name"] for record in result]
-            
+
             close_matches = []
             for name in all_names:
                 ratio = fuzz.ratio(query.lower(), name.lower())
                 if ratio > 20:
                     close_matches.append(name)
-            
+
             if not close_matches:
                 result = session.run(
                     "MATCH (n) WHERE toLower(n.name) CONTAINS toLower($name) RETURN n.name",
@@ -39,14 +39,16 @@ def query_knowledge_graph(query):
         print(f"Error querying knowledge graph: {e}")
         return []
 
-
 def generate_gpt_response(query, kg_results):
-    prompt = f"Query: {query}\nKnowledge Graph Results: {', '.join(kg_results)}\nPlease provide a comprehensive answer based on the query and the knowledge graph results:"
-    
+    if kg_results:
+        prompt = f"Query: {query}\nKnowledge Graph Results: {', '.join(kg_results)}\nPlease provide a comprehensive answer based on the query and the knowledge graph results:"
+    else:
+        prompt = f"Query: {query}\nNo relevant information was found in the knowledge graph. Please provide a comprehensive answer based on your knowledge:"
+
     response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",  # Using GPT-4o mini instead of GPT-3.5 Turbo
+        model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that provides information based on a knowledge graph about Altera FPGA and related topics."},
+            {"role": "system", "content": "You are a helpful assistant that provides information based on a knowledge graph"},
             {"role": "user", "content": prompt}
         ],
         max_tokens=150,
@@ -71,10 +73,10 @@ def query_kg():
         gpt_response = generate_gpt_response(query, kg_results)
         answer = f"Based on the knowledge graph: {gpt_response}"
     else:
-        answer = "No relevant information found in the knowledge graph."
+        gpt_response = generate_gpt_response(query, [])
+        answer = f"No relevant information found in the knowledge graph. However, here's what I found: {gpt_response}"
 
     return jsonify({'answer': answer})
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

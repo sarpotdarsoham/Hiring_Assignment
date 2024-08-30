@@ -130,7 +130,7 @@ def clear_graph():
         logger.info("Existing graph cleared.")
 
 if __name__ == "__main__":
-    data_file = "extended_extracted_data.txt"
+    data_file = "extracted_data.txt"
     
     clear_graph()
 

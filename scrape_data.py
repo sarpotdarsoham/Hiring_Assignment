@@ -1,74 +1,101 @@
 import requests
 from bs4 import BeautifulSoup
-import json
 import re
-import fitz
+import logging
+import sys
 
-def scrape_wikipedia_page(url):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-    structured_data = []
-    for script in soup.find_all('script', type='application/ld+json'):
-        try:
-            data = json.loads(script.string)
-            structured_data.append(data)
-        except json.JSONDecodeError:
-            continue
+api_key = "AIzaSyAfd_IEh6P2Ssj7SJHeBH1NWzkBhHoV9OM"
+search_engine_id = "c60b50ebadc2944c0"
 
-    headings = [h2.text.strip() for h2 in soup.find_all('h2')]
-    paragraphs = [p.text.strip() for p in soup.find_all('p')]
-    tables = [table.text.strip() for table in soup.find_all('table')]
-    infobox = soup.find(class_="infobox")
-    infobox_data = infobox.text.strip() if infobox else ""
+ALLOWED_DOMAINS = ["wikipedia.org", "blogspot.com", "medium.com", "wordpress.com"]
 
-    return {
-        "structured_data": structured_data,
-        "headings": headings,
-        "paragraphs": paragraphs,
-        "tables": tables,
-        "infobox": infobox_data
+def get_search_results(query, api_key, search_engine_id, num_results=5):
+    logger.info(f"Starting search for topic: {query}")
+    url = "https://www.googleapis.com/customsearch/v1"
+    params = {
+        'q': query,
+        'key': api_key,
+        'cx': search_engine_id,
+        'num': num_results
     }
+    response = requests.get(url, params=params)
+    
+    if response.status_code == 200:
+        results = response.json().get('items', [])
+        filtered_results = [
+            item['link'] for item in results if any(domain in item['link'] for domain in ALLOWED_DOMAINS)
+        ]
+        logger.info(f"Filtered to {len(filtered_results)} results from allowed domains")
+        return filtered_results
+    else:
+        logger.error(f"Failed to fetch search results. Status code: {response.status_code}")
+        return []
 
-def extract_text_from_pdf(pdf_path):
+def scrape_web_page(url):
+    logger.info(f"Scraping URL: {url}")
     try:
-        doc = fitz.open(pdf_path)
-        text = ""
-        for page in doc:
-            text += page.get_text()
-        return text
+        response = requests.get(url, timeout=20)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, "html.parser")
+
+            main_content = soup.find('main') or soup.find('article') or soup.find('div', class_='main-content')
+
+            paragraphs = main_content.find_all('p') if main_content else soup.find_all('p')
+
+            text = ' '.join([para.get_text() for para in paragraphs])
+            
+            filtered_text = filter_unwanted_text(text)
+
+            logger.info(f"Successfully scraped URL: {url}")
+            return filtered_text
+        else:
+            logger.warning(f"Failed to retrieve content from {url}. Status code: {response.status_code}")
+            return ""
     except Exception as e:
-        print(f"Error extracting text from PDF: {e}")
+        logger.error(f"Error scraping {url}: {e}")
         return ""
 
+def filter_unwanted_text(text):
+    unwanted_phrases = [
+        "Terms of Use", "Privacy Policy", "All rights reserved", 
+        "reproduction", "NBC", "Internet Explorer", "cookies", "©", "consent"
+    ]
+    for phrase in unwanted_phrases:
+        text = re.sub(phrase, '', text, flags=re.IGNORECASE)
+    return text
 
 def clean_text(text):
     text = re.sub(r'\[.*?\]', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
-def save_extracted_data(data, filename="extended_extracted_data.txt"):
+def save_extracted_data(data, filename="extracted_data.txt"):
+    logger.info(f"Saving extracted data to {filename}")
     with open(filename, "w") as file:
-        if data['structured_data']:
-            file.write("Structured Data:\n")
-            for item in data['structured_data']:
-                file.write(json.dumps(item, indent=2) + "\n\n")
-        
-        file.write("Headings:\n" + "\n".join(map(clean_text, data["headings"])) + "\n\n")
-        file.write("Paragraphs:\n" + "\n".join(map(clean_text, data["paragraphs"])) + "\n\n")
-        file.write("Tables:\n" + "\n".join(map(clean_text, data["tables"])) + "\n\n")
-        file.write("Infobox:\n" + clean_text(data["infobox"]) + "\n")
-
-
-def append_pdf_data(pdf_text, filename="extended_extracted_data.txt"):
-    with open(filename, "a") as file:
-        file.write("\n\nPDF Extracted Content:\n")
-        file.write(clean_text(pdf_text) + "\n")
+        file.write(clean_text(data))
+    logger.info("Data saved successfully")
 
 if __name__ == "__main__":
-    url = "https://en.wikipedia.org/wiki/Altera"
-    data = scrape_wikipedia_page(url)
-    save_extracted_data(data)
-    pdf_file = "P1.pdf"
-    pdf_text = extract_text_from_pdf(pdf_file)
-    append_pdf_data(pdf_text)
+    if len(sys.argv) < 2:
+        logger.error("No topic provided. Usage: python scrape_data.py <topic>")
+        sys.exit(1)
+    
+    topic = ' '.join(sys.argv[1:])
+    logger.info(f"Script started for topic: {topic}")
+    
+    urls = get_search_results(topic, api_key, search_engine_id)
+    
+    all_text = ""
+    for url in urls:
+        text = scrape_web_page(url)
+        all_text += text + "\n"
+
+    save_extracted_data(all_text)
+    
+    logger.info("Displaying extracted data:")
+    print(all_text.strip())
+
+    logger.info("Script completed successfully")

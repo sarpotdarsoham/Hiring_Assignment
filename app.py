@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from neo4j import GraphDatabase
+from fuzzywuzzy import fuzz
 import openai
 
 app = Flask(__name__)
@@ -17,11 +18,23 @@ openai.api_key = "sk-proj-br8KhN09qMUuFwPOr2ou49jB8Bdf91r08YoJbLsGIQRNl6ydbxkHaV
 def query_knowledge_graph(query):
     try:
         with driver.session() as session:
-            result = session.run(
-                "MATCH (n) WHERE toLower(n.name) CONTAINS toLower($name) RETURN n.name",
-                name=query
-            )
-            return [record["n.name"] for record in result]
+            result = session.run("MATCH (n) RETURN n.name")
+            all_names = [record["n.name"] for record in result]
+            
+            close_matches = []
+            for name in all_names:
+                ratio = fuzz.ratio(query.lower(), name.lower())
+                if ratio > 20:
+                    close_matches.append(name)
+            
+            if not close_matches:
+                result = session.run(
+                    "MATCH (n) WHERE toLower(n.name) CONTAINS toLower($name) RETURN n.name",
+                    name=query
+                )
+                return [record["n.name"] for record in result]
+            else:
+                return close_matches
     except Exception as e:
         print(f"Error querying knowledge graph: {e}")
         return []

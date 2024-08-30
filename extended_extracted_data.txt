@@ -25,10 +25,14 @@ Structured Data:
 }
 
 Headings:
+Contents
+Products
+Intel Partnership, Acquisition and Ownership
+Restatement of financial results
+See also
+References
 
-.join(map(clean_text, data['headings'])) + '
-
-'Paragraphs:
+Paragraphs:
 Altera Corporation is a manufacturer of programmable logic devices (PLDs) headquartered in San Jose, California. It was founded in 1983 and acquired by Intel in 2015 before becoming independent once again in 2024 as a company focused on development of Field-Programmable Gate Array (FPGA) technology and system on a chip FPGAs.
 The company was founded in 1983 by semiconductor veterans Rodney Smith, Robert Hartmann, James Sansbury, and Paul Newhagen with $500,000 in seed money. The name of the company was a play on "alterable", the type of chips the company created. In 1988, Altera became a public company via an initial public offering (IPO).
 On December 28, 2015, the company was acquired by Intel and became a newly formed business unit called Programmable Solutions Group (PSG). In October 2023, Intel announced it would be spinning off PSG into a separate company at the start of 2024, while maintaining majority ownership and intending to seek an IPO within three years. In February 2024, Intel announced that the newly independent company would reestablish the Altera name and branding.

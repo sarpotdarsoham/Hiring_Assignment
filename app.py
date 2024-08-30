@@ -15,12 +15,17 @@ driver = GraphDatabase.driver(uri, auth=(username, password))
 openai.api_key = "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"
 
 def query_knowledge_graph(query):
-    with driver.session() as session:
-        result = session.run(
-            "MATCH (n) WHERE toLower(n.name) CONTAINS toLower($name) RETURN n.name",
-            name=query
-        )
-        return [record["n.name"] for record in result]
+    try:
+        with driver.session() as session:
+            result = session.run(
+                "MATCH (n) WHERE toLower(n.name) CONTAINS toLower($name) RETURN n.name",
+                name=query
+            )
+            return [record["n.name"] for record in result]
+    except Exception as e:
+        print(f"Error querying knowledge graph: {e}")
+        return []
+
 
 def generate_gpt_response(query, kg_results):
     prompt = f"Query: {query}\nKnowledge Graph Results: {', '.join(kg_results)}\nPlease provide a comprehensive answer based on the query and the knowledge graph results:"
@@ -42,17 +47,21 @@ def generate_gpt_response(query, kg_results):
 @app.route('/query', methods=['POST'])
 def query_kg():
     data = request.json
-    query = data['query']
+    query = data.get('query', "").strip()
+
+    if not query:
+        return jsonify({'answer': 'Query cannot be empty'}), 400
 
     kg_results = query_knowledge_graph(query)
     
     if kg_results:
         gpt_response = generate_gpt_response(query, kg_results)
-        answer = f"Based on the knowledge graph and additional context: {gpt_response}"
+        answer = f"Based on the knowledge graph: {gpt_response}"
     else:
         answer = "No relevant information found in the knowledge graph."
 
     return jsonify({'answer': answer})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

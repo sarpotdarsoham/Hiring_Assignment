@@ -1,8 +1,11 @@
+import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from neo4j import GraphDatabase
 from fuzzywuzzy import fuzz
 import openai
+import subprocess
+import logging
 
 app = Flask(__name__)
 CORS(app)
@@ -11,9 +14,42 @@ uri = "bolt://localhost:7687"
 username = "neo4j"
 password = "Soham@1142000"
 driver = GraphDatabase.driver(uri, auth=(username, password))
-
-# Set up OpenAI API
 openai.api_key = "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"
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def clear_graph():
+    with driver.session() as session:
+        session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE n"))
+        logger.info("\n--- Existing graph cleared ---\n")
+
+
+def trigger_data_scraping(topic):
+    try:
+        logger.info(f"\n--- Starting data scraping process for topic: {topic} ---\n")
+        result = subprocess.run(['python3', 'scrape_data.py', topic], capture_output=True, text=True)
+        if result.returncode == 0:
+            logger.info(f"\n--- Data scraping process for topic '{topic}' completed successfully ---\n")
+            logger.info(result.stdout)
+        else:
+            logger.error(f"\n--- Error in data scraping for topic '{topic}' ---\n{result.stderr}")
+    except Exception as e:
+        logger.error(f"\n--- Failed to trigger data scraping for topic '{topic}' ---\n{str(e)}")
+
+
+def trigger_kg_build():
+    try:
+        logger.info("\n--- Starting Knowledge Graph build process ---\n")
+        result = subprocess.run(['python3', 'build_kg.py'], capture_output=True, text=True)
+        if result.returncode == 0:
+            logger.info("\n--- Knowledge Graph build process completed successfully ---\n")
+            logger.info(result.stdout)
+        else:
+            logger.error(f"\n--- Error in building Knowledge Graph ---\n{result.stderr}")
+    except Exception as e:
+        logger.error(f"\n--- Failed to trigger Knowledge Graph build ---\n{str(e)}")
+
 
 def query_knowledge_graph(query):
     try:
@@ -36,7 +72,7 @@ def query_knowledge_graph(query):
             else:
                 return close_matches
     except Exception as e:
-        print(f"Error querying knowledge graph: {e}")
+        logger.error(f"\n--- Error querying knowledge graph: {e} ---\n")
         return []
 
 def generate_gpt_response(query, kg_results):
@@ -48,7 +84,7 @@ def generate_gpt_response(query, kg_results):
     response = openai.ChatCompletion.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that provides information based on a knowledge graph"},
+            {"role": "system", "content": "You are a helpful assistant that provides information based on a knowledge graph about the queried topic."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=150,
@@ -79,4 +115,10 @@ def query_kg():
     return jsonify({'answer': answer})
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        topic = sys.argv[1]
+        trigger_data_scraping(topic)
+        clear_graph()
+        trigger_kg_build()
+    
     app.run(host='0.0.0.0', port=5001, debug=True)

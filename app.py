@@ -19,11 +19,12 @@ openai.api_key = "sk-proj-br8KhN09qMUuFwPOr2ou49jB8Bdf91r08YoJbLsGIQRNl6ydbxkHaV
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+current_topic = None
+
 def clear_graph():
     with driver.session() as session:
         session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE n"))
         logger.info("\n--- Existing graph cleared ---\n")
-
 
 def trigger_data_scraping(topic):
     try:
@@ -37,7 +38,6 @@ def trigger_data_scraping(topic):
     except Exception as e:
         logger.error(f"\n--- Failed to trigger data scraping for topic '{topic}' ---\n{str(e)}")
 
-
 def trigger_kg_build():
     try:
         logger.info("\n--- Starting Knowledge Graph build process ---\n")
@@ -49,7 +49,6 @@ def trigger_kg_build():
             logger.error(f"\n--- Error in building Knowledge Graph ---\n{result.stderr}")
     except Exception as e:
         logger.error(f"\n--- Failed to trigger Knowledge Graph build ---\n{str(e)}")
-
 
 def query_knowledge_graph(query):
     try:
@@ -74,7 +73,7 @@ def query_knowledge_graph(query):
     except Exception as e:
         logger.error(f"\n--- Error querying knowledge graph: {e} ---\n")
         return []
-
+    
 def generate_gpt_response(query, kg_results):
     if kg_results:
         prompt = f"Query: {query}\nKnowledge Graph Results: {', '.join(kg_results)}\nPlease provide a comprehensive answer based on the query and the knowledge graph results:"
@@ -94,6 +93,24 @@ def generate_gpt_response(query, kg_results):
     )
     
     return response.choices[0].message['content'].strip()
+
+@app.route('/set_topic', methods=['POST'])
+def set_topic():
+    global current_topic
+    data = request.json
+    new_topic = data.get('topic', "").strip()
+
+    if not new_topic:
+        return jsonify({'message': 'Topic cannot be empty'}), 400
+
+    if new_topic != current_topic:
+        current_topic = new_topic
+        trigger_data_scraping(current_topic)
+        clear_graph()
+        trigger_kg_build()
+        return jsonify({'message': f'Topic "{current_topic}" set and Knowledge Graph built successfully.'})
+    else:
+        return jsonify({'message': f'Topic "{current_topic}" is already set.'})
 
 @app.route('/query', methods=['POST'])
 def query_kg():
@@ -115,10 +132,4 @@ def query_kg():
     return jsonify({'answer': answer})
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        topic = sys.argv[1]
-        trigger_data_scraping(topic)
-        clear_graph()
-        trigger_kg_build()
-    
     app.run(host='0.0.0.0', port=5001, debug=True)

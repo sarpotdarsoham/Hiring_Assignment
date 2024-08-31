@@ -1,11 +1,13 @@
 import sys
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from neo4j import GraphDatabase
 from fuzzywuzzy import fuzz
 import openai
 import subprocess
 import logging
+from fpdf import FPDF
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +22,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 current_topic = None
+chat_history = []
 
 def clear_graph():
     with driver.session() as session:
@@ -114,6 +117,7 @@ def set_topic():
 
 @app.route('/query', methods=['POST'])
 def query_kg():
+    global chat_history
     data = request.json
     query = data.get('query', "").strip()
 
@@ -129,7 +133,25 @@ def query_kg():
         gpt_response = generate_gpt_response(query, [])
         answer = f"No relevant information found in the knowledge graph. However, here's what I found: {gpt_response}"
 
+    chat_history.append({'query': query, 'answer': answer})
     return jsonify({'answer': answer})
+
+@app.route('/generate_document', methods=['GET'])
+def generate_document():
+    global chat_history
+    pdf = FPDF()
+    pdf.add_page()
+
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Chat History", ln=True, align='C')
+
+    for chat in chat_history:
+        pdf.multi_cell(0, 10, txt=f"User Query: {chat['query']}\nResponse: {chat['answer']}\n")
+
+    temp_file_path = "chat_history.pdf"
+    pdf.output(temp_file_path)
+
+    return send_file(temp_file_path, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

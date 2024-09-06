@@ -3,7 +3,7 @@ import re
 import logging
 from neo4j import GraphDatabase
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 uri = "bolt://localhost:7687"
@@ -23,8 +23,11 @@ def create_node(tx, label, name, properties=None):
         properties = {}
     properties['name'] = name
     query = f"MERGE (a:{label} {{name: $name}}) SET a += $properties"
-    tx.run(query, name=name, properties=properties)
-    logger.info(f"Node created: ({label}: {name})")
+    try:
+        tx.run(query, name=name, properties=properties)
+        logger.debug(f"Node created: ({label}: {name})")
+    except Exception as e:
+        logger.error(f"Failed to create node ({label}: {name}). Error: {e}")
 
 def create_relationship(tx, source_label, source_name, target_label, target_name, relationship_type):
     source_name = source_name.strip().lower()
@@ -32,25 +35,65 @@ def create_relationship(tx, source_label, source_name, target_label, target_name
     source_label = source_label.strip().capitalize()
     target_label = target_label.strip().capitalize()
 
-    # Check if both nodes exist
+    logger.debug(f"Attempting to create relationship: ({source_label}: '{source_name}') -[{relationship_type}]-> ({target_label}: '{target_name}')")
+
     check_query = f"""
     MATCH (a:{source_label} {{name: $source_name}})
     MATCH (b:{target_label} {{name: $target_name}})
     RETURN a, b
     """
-    result = tx.run(check_query, source_name=source_name, target_name=target_name).single()
+    try:
+        result = tx.run(check_query, source_name=source_name, target_name=target_name).single()
+        
+        if result:
+            logger.debug(f"Both nodes found: {source_label} '{source_name}' and {target_label} '{target_name}'")
+        else:
+            logger.warning(f"One or both nodes not found: {source_label} '{source_name}' or {target_label} '{target_name}'")
 
-    if result:
-        query = f"""
-        MATCH (a:{source_label} {{name: $source_name}})
-        MATCH (b:{target_label} {{name: $target_name}})
-        MERGE (a)-[r:{relationship_type}]->(b)
-        RETURN r
-        """
-        tx.run(query, source_name=source_name, target_name=target_name)
-        logger.info(f"Relationship created: ({source_label}: '{source_name}') -[{relationship_type}]-> ({target_label}: '{target_name}')")
-    else:
-        logger.warning(f"Nodes not found: {source_label} '{source_name}' or {target_label} '{target_name}'. Relationship '{relationship_type}' not created.")
+        if result:
+            query = f"""
+            MATCH (a:{source_label} {{name: $source_name}})
+            MATCH (b:{target_label} {{name: $target_name}})
+            MERGE (a)-[r:{relationship_type}]->(b)
+            RETURN r
+            """
+            tx.run(query, source_name=source_name, target_name=target_name)
+            logger.debug(f"Relationship created: ({source_label}: '{source_name}') -[{relationship_type}]-> ({target_label}: '{target_name}')")
+        else:
+            
+            logger.warning(f"Nodes not found: {source_label} '{source_name}' or {target_label} '{target_name}'. Relationship '{relationship_type}' not created.")
+    except Exception as e:
+        logger.error(f"Failed to create relationship: {e}")
+
+    source_name = source_name.strip().lower()
+    target_name = target_name.strip().lower()
+    source_label = source_label.strip().capitalize()
+    target_label = target_label.strip().capitalize()
+
+    logger.debug(f"Attempting to create relationship: ({source_label}: '{source_name}') -[{relationship_type}]-> ({target_label}: '{target_name}')")
+
+    check_query = f"""
+    MATCH (a:{source_label} {{name: $source_name}})
+    MATCH (b:{target_label} {{name: $target_name}})
+    RETURN a, b
+    """
+    try:
+        result = tx.run(check_query, source_name=source_name, target_name=target_name).single()
+        
+        if result:
+            query = f"""
+            MATCH (a:{source_label} {{name: $source_name}})
+            MATCH (b:{target_label} {{name: $target_name}})
+            MERGE (a)-[r:{relationship_type}]->(b)
+            RETURN r
+            """
+            tx.run(query, source_name=source_name, target_name=target_name)
+            logger.debug(f"Relationship created: ({source_label}: '{source_name}') -[{relationship_type}]-> ({target_label}: '{target_name}')")
+        else:
+            logger.warning(f"Nodes not found: {source_label} '{source_name}' or {target_label} '{target_name}'. Relationship '{relationship_type}' not created.")
+    except Exception as e:
+        logger.error(f"Failed to create relationship: {e}")
+
 
 def determine_relationship(token):
     if token.dep_ == "nsubj" and token.head.lemma_ in {"manufacture", "produce", "create", "develop"}:
@@ -86,11 +129,13 @@ def extract_entities_and_relationships(text):
                 relationship_type = determine_relationship(token)
                 relationships.append((subject.text, subject.ent_type_, token.text, token.ent_type_, relationship_type))
 
-    logger.info(f"Entities extracted: {entities}")
-    logger.info(f"Relationships extracted: {relationships}")
+    logger.debug(f"Entities extracted: {entities}")
+    logger.debug(f"Relationships extracted: {relationships}")
+    
+    print(f"\nExtracted Entities: {entities}")
+    print(f"Extracted Relationships: {relationships}\n")
     
     return list(set(entities)), list(set(relationships))
-
 
 def build_knowledge_graph_in_batches(file_path, batch_size=100):
     with driver.session() as session:
@@ -103,10 +148,12 @@ def build_knowledge_graph_in_batches(file_path, batch_size=100):
                 relationships_batch.extend(relationships)
                 
                 if len(entities_batch) >= batch_size:
+                    logger.debug(f"Creating a batch of {len(entities_batch)} entities.")
                     session.write_transaction(lambda tx: batch_create_nodes(tx, entities_batch))
                     entities_batch = []
 
                 if len(relationships_batch) >= batch_size:
+                    logger.debug(f"Creating a batch of {len(relationships_batch)} relationships.")
                     session.write_transaction(lambda tx: batch_create_relationships(tx, relationships_batch))
                     relationships_batch = []
 
